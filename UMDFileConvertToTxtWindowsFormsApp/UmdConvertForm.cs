@@ -62,6 +62,8 @@ namespace UMDFileConvertToTxtWindowsFormsApp
 
         private void button2_Click(object sender, EventArgs e)
         {
+            _saveFileDialog.Filter = "文本文件(*.txt)|*.txt";
+            _saveFileDialog.FileName = _umdFile.Title.Title + ".txt"; ;
             if (_umdFile == null)
             {
                 MessageBox.Show("请先打开需要转换的umd文件");
