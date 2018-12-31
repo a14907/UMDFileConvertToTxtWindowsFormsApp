@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>wude wang</authors>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/a14907/UMDFileConvertToTxtWindowsFormsApp.git</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is an umd file parse</description>
+    <releaseNotes>This is an umd file parse</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>umdfile</tags>
+  </metadata>
+</package>

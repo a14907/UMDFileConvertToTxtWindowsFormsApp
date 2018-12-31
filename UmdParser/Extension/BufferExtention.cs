@@ -16,13 +16,17 @@ namespace UmdParser
         public static byte[] ZLibBufferToString(this byte[] buf, int len)
         {
             //using (var ms = new MemoryStream(buf, 0, len))
-            //using (var ds=new GZipStream(ms, CompressionMode.Decompress))
+            //using (var ds = new GZipStream(ms, CompressionMode.Decompress))
             //{
-            //    using (StreamReader reader = new StreamReader(ds, Encoding.Unicode))
+            //    byte[] decompressed = new byte[32 * 1024 + 10];
+            //    int readlen = 0;
+            //    int readSum = 0;
+            //    do
             //    {
-            //        var res = reader.ReadToEnd();
-            //        return res;
-            //    }
+            //        readlen = ds.Read(decompressed, readlen, decompressed.Length - readSum);
+            //        readSum += readlen;
+            //    } while (readlen != 0);
+            //    return decompressed.Take(readSum).ToArray();
             //}
 
             var strm = new zlib.ZStream();
@@ -61,7 +65,7 @@ namespace UmdParser
                 //        return res;
                 //    }
                 //}
-                if (decompressed.Length== (int)strm.total_out)
+                if (decompressed.Length == (int)strm.total_out)
                 {
                     return decompressed;
                 }
