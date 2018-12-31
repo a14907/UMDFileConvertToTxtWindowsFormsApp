@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
@@ -11,8 +13,18 @@ namespace UmdParser
             return Encoding.Unicode.GetString(buf);
         }
 
-        public static string ZLibBufferToString(this byte[] buf, int len)
+        public static byte[] ZLibBufferToString(this byte[] buf, int len)
         {
+            //using (var ms = new MemoryStream(buf, 0, len))
+            //using (var ds=new GZipStream(ms, CompressionMode.Decompress))
+            //{
+            //    using (StreamReader reader = new StreamReader(ds, Encoding.Unicode))
+            //    {
+            //        var res = reader.ReadToEnd();
+            //        return res;
+            //    }
+            //}
+
             var strm = new zlib.ZStream();
             strm.next_in = buf;
             strm.avail_in = len;
@@ -21,7 +33,7 @@ namespace UmdParser
                 return null;
             }
             bool done = false;
-            byte[] decompressed = new byte[len * 2];
+            byte[] decompressed = new byte[32 * 1024];
             int status = 0;
 
             while (!done)
@@ -41,17 +53,21 @@ namespace UmdParser
             if (done)
             {
 
-                using (var ms = new MemoryStream(decompressed, 0, (int)strm.total_out))
+                //using (var ms = new MemoryStream(decompressed, 0, (int)strm.total_out))
+                //{
+                //    using (StreamReader reader = new StreamReader(ms, Encoding.Unicode))
+                //    {
+                //        var res = reader.ReadToEnd();
+                //        return res;
+                //    }
+                //}
+                if (decompressed.Length== (int)strm.total_out)
                 {
-                    using (StreamReader reader = new StreamReader(ms, Encoding.Unicode))
-                    {
-                        var res = reader.ReadToEnd();
-                        return res;
-                    }
+                    return decompressed;
                 }
+                return decompressed.Take((int)strm.total_out).ToArray();
             }
             else return null;
-
         }
     }
 

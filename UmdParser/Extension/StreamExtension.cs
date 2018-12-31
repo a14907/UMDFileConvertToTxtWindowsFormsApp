@@ -8,7 +8,7 @@ namespace UmdParser
 {
     public static class StreamExtension
     {
-        public static PropertySection ReadCover(this Stream stream, byte[] buf)
+        public static CoverSection ReadCover(this Stream stream, byte[] buf)
         {
             int flag = stream.ReadByte();
             if (flag != 0x23)
@@ -16,7 +16,7 @@ namespace UmdParser
                 throw new Exception("封面处读取错误");
             }
             int type = stream.ReadByte();
-            if (type != (int)PropertyEnum.Cover)
+            if (type != (int)MetaDataEnum.Cover)
             {
                 throw new Exception("封面处读取错误");
             }
@@ -30,16 +30,15 @@ namespace UmdParser
                 buf = new byte[len];
             }
             stream.ReadLength(buf, len);
-            return new PropertySection
+            return new CoverSection
             {
-                PropertyEnum = PropertyEnum.Cover,
                 CoverBuffer = buf
             };
 
         }
-        public static PropertySection ReadContent(this Stream stream, byte[] buf)
+        public static ContentSection ReadContent(this Stream stream, byte[] buf)
         {
-            var res = new List<string>();
+            var res = new List<byte[]>();
             do
             {
                 //一个0x24
@@ -88,16 +87,16 @@ namespace UmdParser
                 var t = buf.ZLibBufferToString(len);
                 res.Add(t);
             } while (true);
-            return new PropertySection { PropertyEnum = PropertyEnum.Content, Content = res };
+            return new ContentSection { ContentBuffer = res };
         }
-        public static PropertySection ReadChapterTitle(this Stream stream, byte[] buf, int chapterCount)
+        public static ChapterTitleSection ReadChapterTitle(this Stream stream, byte[] buf, int chapterCount)
         {
             //#
             stream.ReadByte();
             //type
             stream.ReadLength(buf, 2);
             int type = BitConverter.ToInt16(buf, 0);
-            if (type != (int)PropertyType.ChapterTitle)
+            if (type != (int)FileSectionType.ChapterTitle)
             {
                 return null;
             }
@@ -109,7 +108,7 @@ namespace UmdParser
             //然后就是写每章标题的内容了，
             //按如下格式写：首先1个字节，内容章节标题长度 * 2，接下来章节标题长度 * 2个字节，
             //内容是章节长度的Unicode编码
-            var res = new PropertySection { PropertyEnum = PropertyEnum.ChapterTitle, ChapterTitle = new List<string>(chapterCount) };
+            var res = new ChapterTitleSection { ChapterTitle = new List<string>(chapterCount) };
             for (int i = 0; i < chapterCount; i++)
             {
                 //一个字节，长度
@@ -120,14 +119,14 @@ namespace UmdParser
             }
             return res;
         }
-        public static PropertySection ReadChapterOffset(this Stream stream, byte[] buf)
+        public static ChapterOffsetSection ReadChapterOffset(this Stream stream, byte[] buf)
         {
             //#
             stream.ReadByte();
             //type
             stream.ReadLength(buf, 2);
             int type = BitConverter.ToInt16(buf, 0);
-            if (type != (int)PropertyType.ChapterOffset)
+            if (type != (int)FileSectionType.ChapterOffset)
             {
                 return null;
             }
@@ -136,7 +135,7 @@ namespace UmdParser
             //接下来四个字节和章节数目有关（章节数目*4）+9
             stream.ReadLength(buf, 4);
             int chapterLength = (BitConverter.ToInt32(buf, 0) - 9) / 4;
-            var res = new PropertySection { PropertyEnum = PropertyEnum.ChapterOffset, ChapterOffset = new List<int>(chapterLength) };
+            var res = new ChapterOffsetSection { ChapterOffset = new List<int>(chapterLength) };
             for (int i = 0; i < chapterLength; i++)
             {
                 stream.ReadLength(buf, 4);
@@ -144,7 +143,7 @@ namespace UmdParser
             }
             return res;
         }
-        public static PropertySection ReadFileProperty(this Stream stream, byte[] buf)
+        public static FileSection ReadFileProperty(this Stream stream, byte[] buf, UmdFile file)
         {
             //#开头
             int start = stream.ReadByte();
@@ -166,19 +165,89 @@ namespace UmdParser
             //一个长度的字节
             int len = stream.ReadByte() - 5;
             stream.ReadLength(buf, len);
-            if (type == (int)PropertyEnum.ContentLength)
+            var typeEnum = (MetaDataEnum)type;
+            switch (typeEnum)
             {
-                return new PropertySection
-                {
-                    PropertyEnum = PropertyEnum.ContentLength,
-                    ContentLength = BitConverter.ToInt32(buf, 0)
-                };
+                case MetaDataEnum.FileStart:
+                    return null;
+                case MetaDataEnum.Title:
+                    var title = new FileTitleSection
+                    {
+                        Title = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    file.Title = title;
+                    return title;
+                case MetaDataEnum.Author:
+                    var author = new AuthorSection
+                    {
+                        Author = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    file.Author = author;
+                    return author;
+                case MetaDataEnum.Year:
+                    var year = new YearSection
+                    {
+                        Year = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    if (file.PublishDate == null)
+                    {
+                        file.PublishDate = new PublishDateSection();
+                    }
+                    file.PublishDate.Year = year;
+                    return year;
+                case MetaDataEnum.Month:
+                    var month = new MonthSection
+                    {
+                        Month = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    if (file.PublishDate == null)
+                    {
+                        file.PublishDate = new PublishDateSection();
+                    }
+                    file.PublishDate.Month = month;
+                    return month;
+                case MetaDataEnum.Day:
+                    var day = new DaySection
+                    {
+                        Day = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    if (file.PublishDate == null)
+                    {
+                        file.PublishDate = new PublishDateSection();
+                    }
+                    file.PublishDate.Day = day;
+                    return day;
+                case MetaDataEnum.NovelType:
+                    var novelType = new NovelTypeSection
+                    {
+                        NovelType = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    file.NovelType = novelType;
+                    return novelType;
+                case MetaDataEnum.Publisher:
+                    var publisher = new PublisherSection
+                    {
+                        Publisher = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    file.Publisher = publisher;
+                    return publisher;
+                case MetaDataEnum.Saler:
+                    var saler = new SalerSection
+                    {
+                        Saler = Encoding.Unicode.GetString(buf, 0, len)
+                    };
+                    file.Saler = saler;
+                    return saler;
+                case MetaDataEnum.ContentLength:
+                    var contentLength = new ContentLengthSection
+                    {
+                        ContentLength = BitConverter.ToInt32(buf, 0)
+                    };
+                    file.ContentLength = contentLength;
+                    return contentLength;
+                default:
+                    return null;
             }
-            return new PropertySection
-            {
-                PropertyEnum = (PropertyEnum)type,
-                StringExpression = Encoding.Unicode.GetString(buf, 0, len)
-            };
         }
 
         private static byte[] _propertyTypes = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0b, };

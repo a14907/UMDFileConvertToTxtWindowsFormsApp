@@ -44,13 +44,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BufferExtention.cs" />
+    <Compile Include="DefaultUmdParser.cs" />
+    <Compile Include="Extension\BufferExtention.cs" />
+    <Compile Include="Models\Sections\AuthorSection.cs" />
+    <Compile Include="Models\Sections\ChapterOffsetSection.cs" />
+    <Compile Include="Models\Sections\ChapterTitleSection.cs" />
+    <Compile Include="Models\Sections\ContentLengthSection.cs" />
+    <Compile Include="Models\Sections\ContentSection.cs" />
+    <Compile Include="Models\Sections\CoverSection.cs" />
+    <Compile Include="Models\Sections\DaySection.cs" />
+    <Compile Include="Models\Sections\FileSection.cs" />
+    <Compile Include="Models\FileSectionType.cs" />
     <Compile Include="IUmdParser.cs" />
+    <Compile Include="Models\MetaDataEnum.cs" />
+    <Compile Include="Models\Sections\FileTitleSection.cs" />
+    <Compile Include="Models\Sections\MonthSection.cs" />
+    <Compile Include="Models\Sections\NovelTypeSection.cs" />
+    <Compile Include="Models\Sections\PublishDateSection.cs" />
+    <Compile Include="Models\Sections\PublisherSection.cs" />
+    <Compile Include="Models\Sections\SalerSection.cs" />
+    <Compile Include="Models\Sections\YearSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyEnum.cs" />
-    <Compile Include="PropertySection.cs" />
-    <Compile Include="StreamExtension.cs" />
-    <Compile Include="UmdParser.cs" />
+    <Compile Include="Extension\StreamExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,6 +1,6 @@
 ﻿namespace UmdParser
 {
-    public enum PropertyEnum
+    public enum MetaDataEnum
     {
         FileStart = 0x01,
         Title = 0x02,
@@ -16,14 +16,6 @@
         ChapterTitle = 0x84,
         Content = 0x77,
         Cover = 0x82,
-    }
-
-    public enum PropertyType
-    {
-        FileMeta = 1,
-        Content = 2,
-        Cover = 0x82,
-        ChapterOffset = 0x83,
-        ChapterTitle = 0x84,
+        PublishDate = 0x90,
     }
 }
