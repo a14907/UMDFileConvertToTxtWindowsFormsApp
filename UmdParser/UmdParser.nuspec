@@ -8,9 +8,12 @@
     <owners>$author$</owners>
     <projectUrl>https://github.com/a14907/UMDFileConvertToTxtWindowsFormsApp.git</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This is an umd file parse</description>
-    <releaseNotes>This is an umd file parse</releaseNotes>
+    <description>This is an umd file parser</description>
     <copyright>Copyright 2018</copyright>
+    <license type="file">license\license.txt</license>
     <tags>umdfile</tags>
   </metadata>
+  <files>
+    <file src="license\license.txt" target="license\license.txt"/>
+  </files>
 </package>
