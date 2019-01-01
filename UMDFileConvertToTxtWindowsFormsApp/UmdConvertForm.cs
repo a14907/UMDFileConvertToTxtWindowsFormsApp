@@ -35,7 +35,8 @@ namespace UMDFileConvertToTxtWindowsFormsApp
             {
                 _umdFile = _umdParser.Parse(stream);
                 //封面
-                picCover.Image = Image.FromStream(new MemoryStream(_umdFile.Cover.CoverBuffer));
+                if (_umdFile.Cover != null)
+                    picCover.Image = Image.FromStream(new MemoryStream(_umdFile.Cover.CoverBuffer));
                 //文件属性
                 txtFileProperties.Clear();
                 foreach (var item in _umdFile.GetFileMetaData())
@@ -75,7 +76,7 @@ namespace UMDFileConvertToTxtWindowsFormsApp
             }
             var fileName = _saveFileDialog.FileName;
             using (var fs = new FileStream(fileName, FileMode.Create))
-            using (var sw=new StreamWriter(fs,Encoding.UTF8))
+            using (var sw = new StreamWriter(fs, Encoding.UTF8))
             {
                 //fs.Write(new byte[] { 0xff, 0xfe }, 0, 2);
                 //foreach (var item in _umdFile.Content.ContentBuffer)
@@ -85,7 +86,7 @@ namespace UMDFileConvertToTxtWindowsFormsApp
 
                 foreach (var item in _umdFile.Content.ContentBuffer)
                 {
-                    sw.Write(Encoding.Unicode.GetString(item).Replace("\u2029","\n"));
+                    sw.Write(Encoding.Unicode.GetString(item).Replace("\u2029", "\n"));
                 }
             }
             MessageBox.Show("save success");

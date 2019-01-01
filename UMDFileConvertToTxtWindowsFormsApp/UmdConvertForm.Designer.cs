@@ -130,6 +130,7 @@
             this.richTxtContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTxtContent.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.richTxtContent.Location = new System.Drawing.Point(277, 53);
             this.richTxtContent.Name = "richTxtContent";
             this.richTxtContent.Size = new System.Drawing.Size(511, 665);

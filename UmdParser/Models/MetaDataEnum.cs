@@ -16,6 +16,8 @@
         ChapterTitle = 0x84,
         Content = 0x77,
         Cover = 0x82,
+        PageOffset = 0x87,
         PublishDate = 0x90,
+        FileEnd = 0x0c
     }
 }

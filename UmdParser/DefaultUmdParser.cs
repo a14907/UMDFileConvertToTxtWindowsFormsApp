@@ -39,15 +39,33 @@ namespace UmdParser
             file.Content = stream.ReadContent(buf);
             //封面
             file.Cover = stream.ReadCover(buf);
-            //文件结束 9个字节
-            if (9 != (stream.Length - stream.Position))
+            //页面偏移
+            PageOffsetItem pageoffsetItem = null;
+            do
             {
+                pageoffsetItem = stream.ReadPageOffsetItem(buf);
+
+                if (file.PageOffset == null)
+                {
+                    file.PageOffset = new PageOffsetSection { PageOffsetCollection = new List<PageOffsetItem>() };
+                }
+                if (pageoffsetItem != null)
+                    file.PageOffset.PageOffsetCollection.Add(pageoffsetItem);
+            } while (pageoffsetItem != null);
+            //文件结束 9个字节
+            stream.ReadByte();
+            var end = stream.ReadByte();
+            if (end != 0x0c)
+            {
+                stream.ReadLength(buf, (int)(stream.Length - stream.Position));
                 Console.WriteLine("文件大小对不上");
             }
+
             if (file.Content.Content == null)
             {
                 file.Content.Content = new string[file.ChapterOffset.ChapterOffset.Count];
             }
+
             return file;
         }
     }

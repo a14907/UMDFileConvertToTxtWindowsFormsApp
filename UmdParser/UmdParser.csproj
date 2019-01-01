@@ -63,6 +63,7 @@
     <Compile Include="Models\Sections\FileTitleSection.cs" />
     <Compile Include="Models\Sections\MonthSection.cs" />
     <Compile Include="Models\Sections\NovelTypeSection.cs" />
+    <Compile Include="Models\Sections\PageOffsetSection.cs" />
     <Compile Include="Models\Sections\PublishDateSection.cs" />
     <Compile Include="Models\Sections\PublisherSection.cs" />
     <Compile Include="Models\Sections\SalerSection.cs" />

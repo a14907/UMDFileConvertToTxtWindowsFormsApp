@@ -26,6 +26,7 @@ namespace UmdParser
         public PublisherSection Publisher { get; internal set; }
         public SalerSection Saler { get; internal set; }
         public ContentLengthSection ContentLength { get; internal set; }
+        public PageOffsetSection PageOffset { get; internal set; }
 
         public IEnumerable<FileSection> GetFileMetaData()
         {

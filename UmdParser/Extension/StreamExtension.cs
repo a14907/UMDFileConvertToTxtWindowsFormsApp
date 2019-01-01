@@ -8,6 +8,46 @@ namespace UmdParser
 {
     public static class StreamExtension
     {
+        public static PageOffsetItem ReadPageOffsetItem(this Stream stream, byte[] buf)
+        {
+            int flag = stream.ReadByte();
+            if (flag != 0x23)
+            {
+                throw new Exception("页面偏移处读取错误");
+            }
+            int type = stream.ReadByte();
+            if (type != (int)MetaDataEnum.PageOffset)
+            {
+                if (type == (int)MetaDataEnum.FileEnd)
+                {
+                    //页面偏移
+                    stream.Position = stream.Position - 2;
+                    return null;
+                }
+                throw new Exception("页面偏移处读取错误");
+            }
+            //14个无用字节
+            stream.ReadByte();
+            stream.ReadLength(buf, 4);
+            var offsetType = buf.Take(4).ToArray();
+            stream.ReadLength(buf, 9);
+            //4个字节的数据和页面偏移有关，内容是偏移数据字节数+9
+            stream.ReadLength(buf, 4);
+            var pageCount = (BitConverter.ToInt32(buf, 0) - 9) / 4;
+            var offsetDatals = new List<int>(pageCount);
+            for (int i = 0; i < pageCount; i++)
+            {
+                stream.ReadLength(buf, 4);
+                var olen = BitConverter.ToInt32(buf, 0);
+                offsetDatals.Add(olen);
+            }
+            return new PageOffsetItem
+            {
+                PageOffset = offsetDatals,
+                Type = offsetType
+            };
+        }
+
         public static CoverSection ReadCover(this Stream stream, byte[] buf)
         {
             int flag = stream.ReadByte();
@@ -18,6 +58,12 @@ namespace UmdParser
             int type = stream.ReadByte();
             if (type != (int)MetaDataEnum.Cover)
             {
+                if (type == (int)MetaDataEnum.PageOffset)
+                {
+                    //页面偏移
+                    stream.Position = stream.Position - 2;
+                    return null;
+                }
                 throw new Exception("封面处读取错误");
             }
             //13个无用字节
@@ -32,7 +78,7 @@ namespace UmdParser
             stream.ReadLength(buf, len);
             return new CoverSection
             {
-                CoverBuffer = buf
+                CoverBuffer = buf.Take(len).ToArray()
             };
 
         }
@@ -267,9 +313,11 @@ namespace UmdParser
                 throw new ArgumentException("参数不合法", "length");
             }
             int readlen = 0;
+            int readSum = 0;
             do
             {
-                readlen = stream.Read(buf, readlen, length - readlen);
+                readlen = stream.Read(buf, readSum, length - readSum);
+                readSum += readlen;
             } while (readlen < length);
         }
     }
