@@ -2,18 +2,16 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>1.0.1</version>
     <title>$title$</title>
-    <authors>wude wang</authors>
-    <owners>$author$</owners>
+    <authors>wude_wang</authors>
+    <owners>wude_wang</owners>
+    <licenseUrl>https://raw.githubusercontent.com/a14907/UMDFileConvertToTxtWindowsFormsApp/master/UmdParser/license/license.txt</licenseUrl>
     <projectUrl>https://github.com/a14907/UMDFileConvertToTxtWindowsFormsApp.git</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This is an umd file parser</description>
-    <copyright>Copyright 2018</copyright>
-    <license type="file">license\license.txt</license>
-    <tags>umdfile</tags>
+    <description>An umd file parser</description>
+    <releaseNotes>add the analysis of pageOffset.</releaseNotes>
+    <copyright>Copyright 2019</copyright>
+    <tags>umd</tags>
   </metadata>
-  <files>
-    <file src="license\license.txt" target="license\license.txt"/>
-  </files>
 </package>
